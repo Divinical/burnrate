@@ -44,6 +44,13 @@ toggleExtrasBtn.addEventListener('click', () => {
     ? (hasExpenses ? 'Hide Optional Expenses' : 'Add Optional Expenses')
     : (hasExpenses ? 'View Optional Expenses' : '+ Add Optional Expenses');
 });
+// === TOGGLE CUSTOM INCOME SECTION ===
+const toggleIncomeBtn = document.getElementById('toggleIncome');
+const extraIncomeSection = document.getElementById('extra-income-section');
+toggleIncomeBtn.addEventListener('click', () => {
+  extraIncomeSection.classList.toggle('hidden');
+});
+
 let customCount = 0;
 const addCustomBtn = document.getElementById('addCustom');
 const customInputsContainer = document.getElementById('custom-inputs');
@@ -84,7 +91,44 @@ function addCustomInput(label = '', amount = '', recurrence = 'monthly') {
   updateLiveTotal();
 }
 
+
 addCustomBtn.addEventListener('click', () => addCustomInput());
+let incomeCount = 0;
+const addIncomeBtn = document.getElementById('addCustomIncome');
+const customIncomeContainer = document.getElementById('custom-income-inputs');
+
+function addCustomIncome(label = '', amount = '', recurrence = 'monthly') {
+  incomeCount++;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'space-y-2 group';
+
+  wrapper.innerHTML = `
+    <input type="text" maxlength="25" class="custom-income-label w-full rounded-md bg-zinc-800 border border-zinc-700 px-4 py-2 text-sm text-white" placeholder="Label e.g. Freelance Logo" value="${label}" />
+    <div class="relative">
+      <span class="currency-symbol absolute left-3 top-1/2 -translate-y-1/2 font-semibold text-zinc-400">${currentCurrency}</span>
+      <input type="number" class="custom-income pl-7 w-full rounded-md bg-zinc-800 border border-zinc-700 px-4 py-2 text-white" placeholder="00.00" value="${amount}" />
+      <button class="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-zinc-500 hover:text-red-400 delete-income" title="Remove">✕</button>
+    </div>
+    <select class="income-recurrence w-full bg-zinc-800 border border-zinc-700 text-sm text-white rounded-md py-2 px-3">
+      <option value="monthly" ${recurrence === 'monthly' ? 'selected' : ''}>Monthly</option>
+      <option value="weekly" ${recurrence === 'weekly' ? 'selected' : ''}>Weekly</option>
+      <option value="once" ${recurrence === 'once' ? 'selected' : ''}>One-time</option>
+    </select>
+  `;
+
+  customIncomeContainer.appendChild(wrapper);
+
+  wrapper.querySelector('.delete-income').addEventListener('click', () => {
+    wrapper.remove();
+    updateLiveTotal();
+  });
+
+  wrapper.querySelector('.custom-income').addEventListener('input', updateLiveTotal);
+  wrapper.querySelector('.income-recurrence').addEventListener('change', updateLiveTotal);
+}
+
+addIncomeBtn.addEventListener('click', () => addCustomIncome());
+
 const incomeInput = document.getElementById('income');
 const essentialsInput = document.getElementById('expenses');
 const totalBox = document.createElement('div');
@@ -93,6 +137,19 @@ totalBox.id = 'liveTotalBox';
 document.querySelector('main').appendChild(totalBox);
 
 function updateLiveTotal() {
+    let extraIncome = 0;
+
+document.querySelectorAll('#custom-income-inputs .group').forEach(group => {
+  const val = parseFloat(group.querySelector('.custom-income')?.value || 0);
+  const recurrence = group.querySelector('.income-recurrence')?.value || 'monthly';
+
+  if (!isNaN(val)) {
+    let adjusted = val;
+    if (recurrence === 'weekly') adjusted *= 4;
+    if (recurrence === 'once') adjusted = val;
+    extraIncome += adjusted;
+  }
+});
   const groups = document.querySelectorAll('.group');
   let optionalTotal = 0;
 
@@ -113,9 +170,10 @@ function updateLiveTotal() {
     }
   });
 
-  const essentials = parseFloat(essentialsInput.value) || 0;
-  const total = essentials + optionalTotal;
-  totalBox.textContent = `Live Total Expenses: ${currentCurrency}${total.toFixed(2)}`;
+const essentials = parseFloat(essentialsInput.value) || 0;
+const total = essentials + optionalTotal;
+const effectiveIncome = (parseFloat(incomeInput.value) || 0) + extraIncome;
+  totalBox.textContent = `Live Total Expenses: ${currentCurrency}${total.toFixed(2)} | Income: ${currentCurrency}${effectiveIncome.toFixed(2)}`;
   totalBox.classList.add("animate-pulse");
 setTimeout(() => totalBox.classList.remove("animate-pulse"), 1000);
 }
