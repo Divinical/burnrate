@@ -131,10 +131,7 @@ addIncomeBtn.addEventListener('click', () => addCustomIncome());
 
 const incomeInput = document.getElementById('income');
 const essentialsInput = document.getElementById('expenses');
-const totalBox = document.createElement('div');
-totalBox.className = 'text-center text-sm text-amber-400 mt-2 drop-shadow-[0_0_6px_rgba(255,193,7,0.4)]';
-totalBox.id = 'liveTotalBox';
-document.querySelector('main').appendChild(totalBox);
+const totalBox = document.getElementById('liveTotalBox');
 
 function updateLiveTotal() {
     let extraIncome = 0;
@@ -221,6 +218,8 @@ function updateResults(survivalDays, essentialsTotal, optionalTotal) {
            💡 <strong>Optional:</strong> ${currentCurrency}${optionalTotal.toFixed(2)}</div>
       <div class="mt-2 text-lg">🕒 You can survive <strong>${Math.floor(survivalDays)}</strong> more days.</div>
       <span class="inline-block px-2 py-1 mt-2 rounded text-xs font-semibold ${status.color} shadow-md shadow-${status.color.split(' ')[0]}/50">
+  ${status.label}
+</span>
     </div>
   `;
 
@@ -261,12 +260,41 @@ calculateBtn.addEventListener('click', () => {
 
 // === RESTORE FROM LOCALSTORAGE ===
 window.addEventListener('DOMContentLoaded', () => {
+    // === THEME TOGGLE ===
+const themeToggle = document.getElementById('themeToggle');
+const rootElement = document.documentElement;
+
+function applySavedTheme() {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'dark') {
+    rootElement.classList.add('dark');
+  } else {
+    rootElement.classList.remove('dark');
+  }
+}
+
+applySavedTheme(); // load preference on startup
+
+themeToggle.addEventListener('click', () => {
+  const isDark = rootElement.classList.contains('dark');
+  if (isDark) {
+    rootElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+  } else {
+    rootElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  }
+});
+
+
   const params = new URLSearchParams(window.location.search);
   const incomeParam = params.get('income');
   const essentialsParam = params.get('essentials');
   const customEncoded = params.get('custom');
 
   const isSnapshot = incomeParam || essentialsParam || customEncoded;
+  document.getElementById('income').addEventListener('input', updateLiveTotal);
+document.getElementById('expenses').addEventListener('input', updateLiveTotal);
 
   // 🔗 STEP 1: Load from snapshot if present
   if (incomeParam) incomeInput.value = incomeParam;
@@ -308,19 +336,23 @@ window.addEventListener('DOMContentLoaded', () => {
     window.history.replaceState({}, document.title, cleanURL);
   }
 });
-
-
-// === CLEAR ALL BUTTON ===
-const resetBtn = document.createElement('button');
-resetBtn.id = 'resetAll';
-resetBtn.textContent = '🗑️ Clear All';
-resetBtn.className = 'mt-2 w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md transition';
-calculateBtn.insertAdjacentElement('afterend', resetBtn);
-
-resetBtn.addEventListener('click', () => {
+document.getElementById('resetAll').addEventListener('click', () => {
   localStorage.removeItem('burnrateData');
   location.reload();
 });
+
+// === CLEAR ALL BUTTON ===
+// const resetBtn = document.createElement('button');
+// resetBtn.id = 'resetAll';
+// resetBtn.textContent = '🗑️ Clear All';
+// resetBtn.className = 'mt-2 w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md transition';
+// calculateBtn.insertAdjacentElement('afterend', resetBtn);
+
+// resetBtn.addEventListener('click', () => {
+//  localStorage.removeItem('burnrateData');
+//  location.reload();
+//});
+
 // === PDF EXPORT (Enhanced) ===
 document.getElementById('exportPDF').addEventListener('click', () => {
   const resultContent = document.getElementById('resultContent');
