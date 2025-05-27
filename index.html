@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BurnRate – Survival Calculator</title>
+
+  <!-- Meta Info -->
+  <meta name="description" content="BurnRate helps you calculate how long you can survive. Track your income, expenses, and burn rate with zero fluff." />
+  <meta name="author" content="BenWritesHUB" />
+  <meta property="og:title" content="BurnRate – Survival Calculator" />
+  <meta property="og:description" content="Track your runway. Survive the grind. Built by a solo founder." />
+  <meta property="og:type" content="website" />
+    <!-- Open Graph Meta (Social Preview) -->
+    <meta property="og:title" content="BurnRate – Survival Calculator" />
+    <meta property="og:description" content="Track your income, expenses, and burn rate. Built by a solo founder for those living on the edge." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://yourdomain.com" />
+    <meta property="og:image" content="https://yourdomain.com/og-image.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <!-- Tailwind + CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+
+<body class="bg-zinc-950 text-white min-h-screen flex flex-col items-center px-4 py-8">
+  <!-- Header -->
+  <header class="mb-8 text-center">
+    <h1 class="text-5xl font-extrabold tracking-tight text-amber-400 drop-shadow-[0_0_12px_rgba(255,193,7,0.3)]">BurnRate</h1>
+<p class="text-base text-zinc-400 mt-2 italic">Track your runway. Survive the grind.</p>
+    <!-- Light Mode + Currency -->
+<div class="flex justify-center items-center gap-4 mt-3">
+  <button id="themeToggle" class="text-sm text-zinc-400 underline hover:text-amber-400 transition">
+    Toggle Light Mode
+  </button>
+  <select id="currencySelector" class="text-sm text-zinc-400 bg-zinc-900 border border-zinc-600 rounded px-2 py-1">
+    <option value="£">£ GBP</option>
+    <option value="$">$ USD</option>
+    <option value="€">€ EUR</option>
+    <option value="¥">¥ JPY</option>
+  </select>
+</div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="w-full max-w-md space-y-6">
+    <!-- Income Input -->
+<label for="income" id="incomeLabel" class="block text-sm font-semibold text-zinc-300 mb-1 text-center">Monthly Income</label>
+    <div class="relative">
+      <span class="currency-symbol absolute left-3 top-1/2 -translate-y-1/2 font-semibold text-zinc-400">£</span>
+      <input
+        type="number"
+        id="income"
+        class="pl-7 w-full rounded-md bg-zinc-800 border border-zinc-700 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+        placeholder="00.00"
+      />
+    </div>
+
+    <!-- Essential Expenses Input -->
+<label for="expenses" id="expensesLabel" class="block text-sm font-semibold text-zinc-300 mb-1 text-center">Essential Expenses</label>
+    <div class="relative">
+      <span class="currency-symbol absolute left-3 top-1/2 -translate-y-1/2 font-semibold text-zinc-400">£</span>
+      <input
+        type="number"
+        id="expenses"
+        class="pl-7 w-full rounded-md bg-zinc-800 border border-zinc-700 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+        placeholder="00.00"
+      />
+    </div>
+
+    <!-- Toggle Optional Section -->
+    <button id="toggleExtras" class="w-full mt-4 bg-zinc-800 border border-zinc-600 hover:bg-zinc-700 text-zinc-200 font-medium py-2 px-4 rounded-md">
+      + Add Optional Expenses
+    </button>
+
+    <!-- Optional Expenses Section -->
+    <section id="extra-section" class="bg-zinc-900 rounded-xl p-6 shadow-md space-y-4 mt-4 hidden">
+      <h2 class="text-lg font-semibold text-zinc-100">Optional Expenses</h2>
+      <div id="custom-inputs" class="space-y-4"></div>
+      <button id="addCustom" class="w-full bg-zinc-800 border border-zinc-600 hover:bg-zinc-700 text-zinc-200 font-medium py-2 px-4 rounded-md">+ Add Custom Expense</button>
+    </section>
+
+    <!-- Calculate Button -->
+    <button id="calculate" class="w-full mt-4 bg-amber-500 hover:bg-amber-600 text-black font-bold py-2 px-4 rounded-md hover:shadow-lg hover:shadow-amber-400/20 transition-all duration-200">
+      Calculate BurnRate
+    </button>
+
+    <!-- Export to PDF button -->
+    <button id="exportPDF" class="w-full mt-2 bg-zinc-700 hover:bg-zinc-600 text-white font-medium py-2 px-4 rounded-md hover:shadow-lg hover:shadow-zinc-200/20 transition-all duration-200">
+  📄 Export to PDF
+    </button>
+    <!-- Copy Snapshot URL -->
+    <button id="copySnapshot" class="w-full mt-2 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md hover:shadow-lg hover:shadow-blue-400/20 transition-all duration-200">
+  🔗 Copy Shareable Link
+    </button>
+
+
+    <!-- Result Output -->
+    <div id="result" class="mt-4 text-center text-lg font-semibold text-emerald-400 hidden"></div>
+    
+    <!-- Help / About Section -->
+<section class="mt-10 text-xs text-zinc-400 text-center border-t border-zinc-800 pt-4">
+  <p class="mb-2">🧭 <strong>About BurnRate:</strong></p>
+  <p>
+    Built in a single evening by a solo founder who’s lived the grind.<br />
+    No fluff. No logins. Just the numbers that matter.
+  </p>
+  <p class="mt-2 italic text-zinc-500">You don’t need a fancy dashboard. You need time to survive.</p>
+</section>
+
+  </main>
+
+  <!-- JS -->
+  <script src="js/main.js"></script>
+</body>
+
+</html>
